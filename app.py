@@ -253,6 +253,8 @@ def add_song_sidebar():
             all_songs = st.session_state.songs[:]
             all_songs.append(normalized)
             st.session_state.songs = all_songs
+        else:
+            st.sidebar.error("Title and artist are required.")
 
 
 def playlist_tabs(playlists):

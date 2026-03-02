@@ -23,7 +23,7 @@ def normalize_artist(artist: str) -> str:
     """Normalize an artist name for comparisons."""
     if not artist:
         return ""
-    return artist.strip().lower()
+    return artist.strip()
 
 
 def normalize_genre(genre: str) -> str:
@@ -73,9 +73,16 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     is_hype_keyword = any(k in genre for k in hype_keywords)
     is_chill_keyword = any(k in title for k in chill_keywords)
 
-    if genre == favorite_genre or energy >= hype_min_energy or is_hype_keyword:
+    # Energy is the primary classifier
+    if energy >= hype_min_energy:
         return "Hype"
-    if energy <= chill_max_energy or is_chill_keyword:
+    if energy <= chill_max_energy:
+        return "Chill"
+
+    # Energy is in the gap between thresholds — use genre/keyword as tiebreaker
+    if genre == favorite_genre or is_hype_keyword:
+        return "Hype"
+    if is_chill_keyword:
         return "Chill"
     return "Mixed"
 
@@ -193,6 +200,8 @@ def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
     """Return a random song or None."""
     import random
 
+    if not songs:
+        return None
     return random.choice(songs)
 
 
